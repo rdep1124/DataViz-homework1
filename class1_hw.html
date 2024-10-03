@@ -13,54 +13,60 @@
         }
 
         th, td {
-        padding: 5px;
-        text-align: left;
+            padding: 5px;
+            text-align: left;
         }
 
-        td.bold {
-            color: red;
+        .active {
+            color: red; /* Style for active players */
         }
-
-
     </style>
 </head>
 <body>
 
     <!-- Table to select (DO NOT TOUCH THIS) -->
-     <table>
+    <table>
         <thead>
             <th>Player</th>
             <th>Points per game</th>
             <th>Total points</th>
         </thead>
         <tbody id="table_body"></tbody>
-     </table>
-
+    </table>
 
     <script>
+        // Import the CSV data
+        d3.csv('nba_data.csv').then(function(data) {
 
-        //select container
+            console.log(data);
 
-
-        //Import the csv
-
-            //convert the points from strings to numbers
-
-            // sort players by points per game, with highest on top
-
-            // add data to table body 
-
-                //if player is active (Lebron James), color that line
+            // Convert the points from strings to numbers
+            data.forEach(d => {
+                d.points_per_game = +d['points_per_game'];
+                d.career_points = +d['career_points'];
+            });
 
 
+            // Sort players by points per game, with highest on top
+            data.sort((a, b) => b.points_per_game - a.points_per_game);
 
+            // Select the table body and bind the data
+            const tableBody = d3.select("#table_body")
+                .selectAll("tr")
+                .data(data)
+                .enter()
+                .append("tr")
+                .attr("class", function(d) {
+                    return d.Player === "LeBron James" ? "active" : null;
+                });
+                
 
-    
+            // Add player name, points per game, and total points to each row
+            tableBody.append("td").text(d => d.player);
+            tableBody.append("td").text(d => d.points_per_game);
+            tableBody.append("td").text(d => d.career_points);
+        });
     </script>
 
 </body>
-
-
-
-
 </html>
